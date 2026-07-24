@@ -541,18 +541,18 @@ const server = http.createServer(async (req, res) => {
 
         let html = '';
         students.forEach(row => {
-          html += \`
+          html += `
             <tr>
-              <td>\${row.student_id || ''}</td>
-              <td>\${row.student_name || ''}</td>
+              <td>${row.student_id || ''}</td>
+              <td>${row.student_name || ''}</td>
               <td>
                 <div class="table-actions">
-                  <button class="btn-edit" onclick="editStudent(\${row.student_id}, '\${(row.student_name || '').replace(/'/g, "\\\\'")}')">แก้ไข</button>
-                  <button class="btn-delete" onclick="deleteStudentRow(\${row.student_id})">ลบ</button>
+                  <button class="btn-edit" onclick="editStudent(${row.student_id}, '${(row.student_name || '').replace(/'/g, "\\'")}')">แก้ไข</button>
+                  <button class="btn-delete" onclick="deleteStudentRow(${row.student_id})">ลบ</button>
                 </div>
               </td>
             </tr>
-          \`;
+          `;
         });
         studentsList.innerHTML = html;
       } catch (err) {
@@ -573,10 +573,10 @@ const server = http.createServer(async (req, res) => {
     // กรณีเชื่อมต่อไม่ไดหรือเขียนชื่อตารางผิด
     console.error(err);
     res.statusCode = 500;
-    res.end(\`<h1>❌ เกิดข้อผิดพลาด!</h1><p>\${err.message}</p>\`);
+    res.end('<h1>❌ เกิดข้อผิดพลาด!</h1><p>' + err.message + '</p>');
   }
 });
 
 server.listen(port, () => {
-  console.log(\`🚀 Server is running on port: \${port}\`);
+  console.log('🚀 Server is running on port: ' + port);
 });
