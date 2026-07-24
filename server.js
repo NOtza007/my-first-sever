@@ -23,190 +23,508 @@ async function getMainPage() {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจัดการข้อมูลนักศึกษา</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1000px;
-            margin: 0 auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
             color: #333;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
             text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
         }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
         }
-        .form-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 6px;
-            border-left: 4px solid #007bff;
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
         }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @media (max-width: 992px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+
+        .form-card h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            font-size: 1.5em;
+        }
+
+        .form-card h2 i {
+            margin-right: 10px;
+            font-size: 1.3em;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95em;
         }
+
         input[type="text"],
         input[type="hidden"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: scale(1.01);
         }
+
+        input[type="text"]:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            color: #999;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
         button {
-            padding: 10px 20px;
-            margin-right: 10px;
+            flex: 1;
+            padding: 12px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: bold;
-            transition: background-color 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+
         .btn-submit {
-            background-color: #28a745;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
+
         .btn-submit:hover {
-            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
         .btn-reset {
-            background-color: #6c757d;
-            color: white;
+            background-color: #f0f0f0;
+            color: #333;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
+
         .btn-reset:hover {
-            background-color: #5a6268;
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
         }
+
+        .table-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .table-card h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            font-size: 1.5em;
+        }
+
+        .table-card h2 i {
+            margin-right: 10px;
+            font-size: 1.3em;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
+
         th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .actions {
-            text-align: center;
-        }
-        .btn-edit {
-            background-color: #ffc107;
-            color: black;
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-        .btn-edit:hover {
-            background-color: #e0a800;
-        }
-        .btn-delete {
-            background-color: #dc3545;
-            color: white;
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-        .btn-delete:hover {
-            background-color: #c82333;
-        }
-        .message {
             padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9ff;
+            transform: scale(1.01);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            color: white;
+            border: none;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 3px 10px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            box-shadow: 0 3px 10px rgba(250, 112, 154, 0.3);
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(250, 112, 154, 0.4);
+        }
+
+        .message {
+            padding: 16px 20px;
             margin-bottom: 20px;
-            border-radius: 4px;
+            border-radius: 10px;
             display: none;
+            animation: slideInTop 0.4s ease-out;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
+
+        .message i {
+            font-size: 1.3em;
+        }
+
         .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #2d5016;
+            border-left: 4px solid #4caf50;
         }
+
         .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #6d1f1f;
+            border-left: 4px solid #f44336;
+        }
+
+        .close-message {
+            margin-left: auto;
+            cursor: pointer;
+            font-size: 1.5em;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .close-message:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInTop {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .student-id {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .student-name {
+            color: #333;
+        }
+
+        /* Loading animation */
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 0.95em;
+            }
+
+            .form-card, .table-card {
+                padding: 20px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            .btn-action {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📚 ระบบจัดการข้อมูลนักศึกษา</h1>
-        
-        <div id="message" class="message"></div>
-
-        <div class="form-section">
-            <h2>➕ เพิ่ม / แก้ไขรายชื่อนักศึกษา</h2>
-            <form id="studentForm" method="POST" action="/add-student">
-                <input type="hidden" id="student_id" name="student_id" value="">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="id_input">รหัสนักศึกษา:</label>
-                        <input type="text" id="id_input" name="id_input" placeholder="เช่น 001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="name_input">ชื่อ-นามสกุล:</label>
-                        <input type="text" id="name_input" name="name_input" placeholder="เช่น นาย สมชาย ใจดี" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn-submit">💾 บันทึกข้อมูล</button>
-                <button type="reset" class="btn-reset">🔄 ล้างข้อมูล</button>
-            </form>
+    <div class="main-container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> ระบบจัดการข้อมูลนักศึกษา</h1>
+            <p>Student Information Management System</p>
         </div>
 
-        <h2>📋 รายชื่อนักศึกษาทั้งหมด</h2>
-        <table>
-            <tr>
-                <th>รหัสนักศึกษา</th>
-                <th>ชื่อ-นามสกุล</th>
-                <th>การจัดการ</th>
-            </tr>
+        <div class="content-wrapper">
+            <!-- Form Section -->
+            <div class="form-card">
+                <h2><i class="fas fa-user-plus"></i> เพิ่ม/แก้ไขข้อมูล</h2>
+                
+                <div id="message" class="message" style="display: none;"></div>
+
+                <form id="studentForm" method="POST" action="/add-student">
+                    <input type="hidden" id="student_id" name="student_id" value="">
+                    
+                    <div class="form-group">
+                        <label for="id_input">
+                            <i class="fas fa-id-card"></i> รหัสนักศึกษา:
+                        </label>
+                        <input type="text" id="id_input" name="id_input" placeholder="เช่น 001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name_input">
+                            <i class="fas fa-user"></i> ชื่อ-นามสกุล:
+                        </label>
+                        <input type="text" id="name_input" name="name_input" placeholder="เช่น นาย สมชาย ใจดี" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i> บันทึกข้อมูล
+                        </button>
+                        <button type="reset" class="btn-reset">
+                            <i class="fas fa-redo"></i> ล้างข้อมูล
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Table Section -->
+            <div class="table-card">
+                <h2><i class="fas fa-list"></i> รายชื่อนักศึกษาทั้งหมด</h2>
+                
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-sort-numeric-up-alt"></i> รหัสนักศึกษา</th>
+                                <th><i class="fas fa-user-tie"></i> ชื่อ-นามสกุล</th>
+                                <th><i class="fas fa-tools"></i> การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 `;
 
     if (result.rows.length === 0) {
-      html += `<tr><td colspan="3" style="text-align: center; color: #999;">ไม่มีข้อมูลนักศึกษา</td></tr>`;
+      html += `
+                            <tr>
+                                <td colspan="3">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>ไม่มีข้อมูลนักศึกษา</p>
+                                    </div>
+                                </td>
+                            </tr>
+`;
     } else {
       result.rows.forEach(row => {
         html += `
-            <tr>
-                <td>${row.student_id}</td>
-                <td>${row.student_name}</td>
-                <td class="actions">
-                    <button type="button" class="btn-edit" onclick="editStudent('${row.student_id}', '${row.student_name.replace(/'/g, "\\'")}')">✏️ แก้ไข</button>
-                    <button type="button" class="btn-delete" onclick="deleteStudent('${row.student_id}')">🗑️ ลบ</button>
-                </td>
-            </tr>
-        `;
+                            <tr>
+                                <td class="student-id">${row.student_id}</td>
+                                <td class="student-name">${row.student_name}</td>
+                                <td class="actions">
+                                    <button type="button" class="btn-action btn-edit" onclick="editStudent('${row.student_id}', '${row.student_name.replace(/'/g, "\\'")}')">
+                                        <i class="fas fa-edit"></i> แก้ไข
+                                    </button>
+                                    <button type="button" class="btn-action btn-delete" onclick="deleteStudent('${row.student_id}')">
+                                        <i class="fas fa-trash"></i> ลบ
+                                    </button>
+                                </td>
+                            </tr>
+`;
       });
     }
 
     html += `
-        </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -214,9 +532,9 @@ async function getMainPage() {
             document.getElementById('student_id').value = id;
             document.getElementById('id_input').value = id;
             document.getElementById('name_input').value = name;
-            document.querySelector('.btn-submit').textContent = '✏️ อัปเดตข้อมูล';
+            document.querySelector('.btn-submit').innerHTML = '<i class="fas fa-sync"></i> อัปเดตข้อมูล';
             document.getElementById('id_input').disabled = true;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         function deleteStudent(id) {
@@ -233,7 +551,7 @@ async function getMainPage() {
         document.getElementById('studentForm').addEventListener('reset', function() {
             document.getElementById('student_id').value = '';
             document.getElementById('id_input').disabled = false;
-            document.querySelector('.btn-submit').textContent = '💾 บันทึกข้อมูล';
+            document.querySelector('.btn-submit').innerHTML = '<i class="fas fa-save"></i> บันทึกข้อมูล';
         });
 
         // แสดงข้อความจากการ redirect
@@ -242,13 +560,23 @@ async function getMainPage() {
         if (message) {
             const messageDiv = document.getElementById('message');
             const isSuccess = urlParams.get('type') === 'success';
-            messageDiv.textContent = decodeURIComponent(message);
+            const icon = isSuccess ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            messageDiv.innerHTML = '<i class="' + icon + '"></i><span>' + decodeURIComponent(message) + '</span><i class="fas fa-times close-message" onclick="this.parentElement.style.display=\\'none\\'"></i>';
             messageDiv.className = 'message ' + (isSuccess ? 'success' : 'error');
+            messageDiv.style.display = 'flex';
             
             // ลบ query string หลังจากแสดงข้อความ
             setTimeout(() => {
                 window.history.replaceState({}, document.title, window.location.pathname);
             }, 100);
+
+            // ซ่อนข้อความหลังจาก 5 วินาที
+            setTimeout(() => {
+                messageDiv.style.animation = 'slideInTop 0.4s ease-out reverse';
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 400);
+            }, 5000);
         }
     </script>
 </body>
@@ -257,7 +585,47 @@ async function getMainPage() {
     return html;
   } catch (err) {
     console.error(err);
-    return `<h1>❌ เกิดข้อผิดพลาด!</h1><p>${err.message}</p>`;
+    return `
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .error-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 500px;
+            text-align: center;
+        }
+        .error-container h1 {
+            color: #f44336;
+            margin-bottom: 15px;
+        }
+        .error-container p {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>❌ เกิดข้อผิดพลาด!</h1>
+        <p>${err.message}</p>
+    </div>
+</body>
+</html>
+    `;
   }
 }
 
